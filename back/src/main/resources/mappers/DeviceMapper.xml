@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unity.back.mapper.DeviceMapper">
+
+    <resultMap id="DeviceMap" type="com.unity.back.entity.Device">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="deviceType" column="device_type"/>
+        <result property="macAddress" column="mac_address"/>
+        <result property="connectionStatus" column="connection_status" javaType="com.unity.back.enums.ConnectionStatus"/>
+        <result property="lastConnected" column="last_connected" javaType="java.time.LocalDateTime"/>
+        <result property="createdAt" column="created_at" javaType="java.time.LocalDateTime"/>
+    </resultMap>
+
+    <sql id="Base_Columns">id, user_id, device_id, device_name, device_type, mac_address, connection_status, last_connected, created_at</sql>
+
+    <insert id="insert" parameterType="com.unity.back.entity.Device" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO devices (user_id, device_id, device_name, device_type, mac_address, connection_status, last_connected)
+        VALUES (#{userId}, #{deviceId}, #{deviceName}, #{deviceType}, #{macAddress}, #{connectionStatus}, #{lastConnected})
+    </insert>
+
+    <update id="update" parameterType="com.unity.back.entity.Device">
+        UPDATE devices
+        <set>
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="macAddress != null">mac_address = #{macAddress},</if>
+            <if test="connectionStatus != null">connection_status = #{connectionStatus},</if>
+            <if test="lastConnected != null">last_connected = #{lastConnected},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findById" parameterType="long" resultMap="DeviceMap">
+        SELECT <include refid="Base_Columns"/> FROM devices WHERE id = #{id}
+    </select>
+
+    <select id="findByDeviceId" parameterType="string" resultMap="DeviceMap">
+        SELECT <include refid="Base_Columns"/> FROM devices WHERE device_id = #{deviceId}
+    </select>
+
+    <select id="findByUserId" parameterType="long" resultMap="DeviceMap">
+        SELECT <include refid="Base_Columns"/> FROM devices WHERE user_id = #{userId} ORDER BY created_at DESC
+    </select>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unity.back.mapper.AlertMapper">
+
+    <resultMap id="AlertMap" type="com.unity.back.entity.Alert">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="alertRuleId" column="alert_rule_id"/>
+        <result property="dataType" column="data_type" javaType="com.unity.back.enums.DataType"/>
+        <result property="measuredValue" column="measured_value"/>
+        <result property="thresholdValue" column="threshold_value"/>
+        <result property="alertMessage" column="alert_message"/>
+        <result property="severity" column="severity" javaType="com.unity.back.enums.Severity"/>
+        <result property="isRead" column="is_read"/>
+        <result property="triggeredAt" column="triggered_at" javaType="java.time.LocalDateTime"/>
+        <result property="readAt" column="read_at" javaType="java.time.LocalDateTime"/>
+    </resultMap>
+
+    <sql id="Cols">id, user_id, device_id, alert_rule_id, data_type, measured_value, threshold_value, alert_message, severity, is_read, triggered_at, read_at</sql>
+
+    <insert id="insert" parameterType="com.unity.back.entity.Alert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO alerts (user_id, device_id, alert_rule_id, data_type, measured_value, threshold_value, alert_message, severity, is_read)
+        VALUES (#{userId}, #{deviceId}, #{alertRuleId}, #{dataType}, #{measuredValue}, #{thresholdValue}, #{alertMessage}, #{severity}, #{isRead})
+    </insert>
+
+    <select id="findByUser" parameterType="long" resultMap="AlertMap">
+        SELECT <include refid="Cols"/>
+        FROM alerts
+        WHERE user_id = #{userId}
+        ORDER BY triggered_at DESC
+    </select>
+
+    <update id="markRead" parameterType="long">
+        UPDATE alerts SET is_read = TRUE, read_at = CURRENT_TIMESTAMP WHERE id = #{id}
+    </update>
+
+    <select id="findById" parameterType="long" resultMap="AlertMap">
+        SELECT <include refid="Cols"/> FROM alerts WHERE id = #{id}
+    </select>
+</mapper>

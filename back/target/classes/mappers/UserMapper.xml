@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unity.back.mapper.UserMapper">
+
+    <resultMap id="UserMap" type="com.unity.back.entity.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="realName" column="real_name"/>
+        <result property="age" column="age"/>
+        <result property="gender" column="gender" javaType="com.unity.back.enums.Gender"/>
+        <result property="height" column="height"/>
+        <result property="weight" column="weight"/>
+        <result property="createdAt" column="created_at" javaType="java.time.LocalDateTime"/>
+        <result property="updatedAt" column="updated_at" javaType="java.time.LocalDateTime"/>
+        <result property="status" column="status" javaType="com.unity.back.enums.UserStatus"/>
+        <result property="role" column="role" javaType="com.unity.back.enums.UserRole"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, username, password, email, phone, real_name, age, gender, height, weight, created_at, updated_at, status, role
+    </sql>
+
+    <insert id="insertUser" parameterType="com.unity.back.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (username, password, email, phone, real_name, age, gender, height, weight, status, role)
+        VALUES (#{username}, #{password}, #{email}, #{phone}, #{realName}, #{age}, #{gender}, #{height}, #{weight}, #{status}, #{role})
+    </insert>
+
+    <select id="findByUsername" parameterType="string" resultMap="UserMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="UserMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateUser" parameterType="com.unity.back.entity.User">
+        UPDATE users
+        <set>
+            <if test="password != null">password = #{password},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="realName != null">real_name = #{realName},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="role != null">role = #{role},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

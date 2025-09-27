@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unity.back.mapper.AlertRuleMapper">
+    <resultMap id="AlertRuleMap" type="com.unity.back.entity.AlertRule">
+        <id property="id" column="id"/>
+        <result property="dataType" column="data_type" javaType="com.unity.back.enums.DataType"/>
+        <result property="minValue" column="min_value"/>
+        <result property="maxValue" column="max_value"/>
+        <result property="severity" column="severity" javaType="com.unity.back.enums.Severity"/>
+        <result property="messageTemplate" column="message_template"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at" javaType="java.time.LocalDateTime"/>
+    </resultMap>
+
+    <sql id="Cols">id, data_type, min_value, max_value, severity, message_template, is_active, created_at</sql>
+
+    <select id="findActiveByType" resultMap="AlertRuleMap">
+        SELECT <include refid="Cols"/>
+        FROM alert_rules
+        WHERE is_active = TRUE AND data_type = #{dataType}
+        ORDER BY severity DESC, id ASC
+    </select>
+</mapper>
